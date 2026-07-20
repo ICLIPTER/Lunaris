@@ -12,6 +12,6 @@ const createMinimap = (): { dom: HTMLDivElement } => {
 
 export const minimap: Extension = showMinimap.compute(["doc"], () => ({
   create: createMinimap,
-  displayText: "blocks",
+  displayText: "characters",
   showOverlay: "always",
 }));
