@@ -69,7 +69,6 @@ export const updateMessageContent = mutation({
     validateInternalKey(args.internalKey);
 
     await ctx.db.patch(args.messageId, {
-      content: args.content,
       status: "completed" as const,
     });
   },
@@ -79,14 +78,17 @@ export const updateMessageStatus = mutation({
   args: {
     internalKey: v.string(),
     messageId: v.id("messages"),
-    content: v.string(),
+    status: v.union(
+      v.literal("processing"),
+      v.literal("completed"),
+      v.literal("cancelled"),
+    ),
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
 
     await ctx.db.patch(args.messageId, {
-      content: args.content,
-      status: "completed" as const,
+      status: args.status,
     });
   },
 });
@@ -107,5 +109,3 @@ export const getProcessingMessages = query({
       .collect();
   },
 });
-
-15:42

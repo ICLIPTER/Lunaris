@@ -45,7 +45,6 @@ export async function POST(request: Request) {
   }
 
   //cancel all processing messages
-
   const cancelledIds = await Promise.all(
     processingMessages.map(async (msg) => {
       await inngest.send({
@@ -54,9 +53,18 @@ export async function POST(request: Request) {
           messageId: msg._id,
         },
       });
-      await convex.mutation(api.system.updateMessageStatus), {
-        
-      }
+      await convex.mutation(api.system.updateMessageStatus, {
+        internalKey,
+        messageId: msg._id,
+        status: "cancelled",
+      });
+      return msg._id;
     }),
   );
+
+  return NextResponse.json({
+    success: true,
+    cancelled: true,
+    messageIds: cancelledIds,
+  });
 }
